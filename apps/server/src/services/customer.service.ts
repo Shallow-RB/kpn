@@ -3,7 +3,13 @@ import { customers } from "@/db/schema/customers";
 import { eq, desc } from "drizzle-orm";
 import { z } from "zod";
 
-// Validation schemas
+/**
+ * Customer Service - Business Logic Layer
+ * Handles all customer-related operations with validation and error handling
+ */
+
+// Zod validation schemas for input validation
+// These ensure data integrity before database operations
 const createCustomerSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
@@ -17,17 +23,29 @@ const createCustomerSchema = z.object({
   notes: z.string().optional(),
 });
 
+// Update schema allows partial updates (all fields optional)
 const updateCustomerSchema = createCustomerSchema.partial();
 
+// TypeScript types inferred from validation schemas
 export type CreateCustomerInput = z.infer<typeof createCustomerSchema>;
 export type UpdateCustomerInput = z.infer<typeof updateCustomerSchema>;
 
+/**
+ * CustomerService class containing all customer-related business logic
+ * Provides CRUD operations with proper validation and error handling
+ */
 export class CustomerService {
+  /**
+   * Create a new customer
+   * @param data - Customer data to create
+   * @returns The created customer
+   * @throws Error if email already exists or validation fails
+   */
   async createCustomer(data: unknown) {
-    // Validate input
+    // Validate input data against schema
     const validatedData = createCustomerSchema.parse(data);
 
-    // Check if email already exists
+    // Check if email already exists to prevent duplicates
     const existingCustomer = await db
       .select()
       .from(customers)
@@ -38,17 +56,24 @@ export class CustomerService {
       throw new Error("Customer with this email already exists");
     }
 
+    // Insert new customer and return the created record
     const [newCustomer] = await db
       .insert(customers)
       .values({
         ...validatedData,
-        updatedAt: new Date(),
+        updatedAt: new Date(), // Set current timestamp
       })
       .returning();
 
     return newCustomer;
   }
 
+  /**
+   * Get a customer by their ID
+   * @param id - Customer ID to find
+   * @returns The customer if found
+   * @throws Error if customer not found
+   */
   async getCustomerById(id: string) {
     const [customer] = await db
       .select()
@@ -62,14 +87,21 @@ export class CustomerService {
     return customer;
   }
 
+  /**
+   * Update an existing customer
+   * @param id - Customer ID to update
+   * @param data - Partial customer data to update
+   * @returns The updated customer
+   * @throws Error if customer not found, email conflict, or validation fails
+   */
   async updateCustomer(id: string, data: unknown) {
-    // Validate input
+    // Validate input data (all fields optional for updates)
     const validatedData = updateCustomerSchema.parse(data);
 
-    // Check if customer exists
+    // Verify customer exists before attempting update
     await this.getCustomerById(id);
 
-    // If email is being updated, check for conflicts
+    // If email is being updated, check for conflicts with other customers
     if (validatedData.email) {
       const emailConflict = await db
         .select()
@@ -77,16 +109,18 @@ export class CustomerService {
         .where(eq(customers.email, validatedData.email))
         .limit(1);
 
+      // Allow update if email belongs to the same customer, otherwise throw error
       if (emailConflict.length > 0 && emailConflict[0].id !== id) {
         throw new Error("Customer with this email already exists");
       }
     }
 
+    // Update customer and return the updated record
     const [updatedCustomer] = await db
       .update(customers)
       .set({
         ...validatedData,
-        updatedAt: new Date(),
+        updatedAt: new Date(), // Update timestamp
       })
       .where(eq(customers.id, id))
       .returning();
@@ -94,10 +128,17 @@ export class CustomerService {
     return updatedCustomer;
   }
 
+  /**
+   * Delete a customer by ID
+   * @param id - Customer ID to delete
+   * @returns The deleted customer
+   * @throws Error if customer not found
+   */
   async deleteCustomer(id: string) {
-    // Check if customer exists
+    // Verify customer exists before attempting deletion
     await this.getCustomerById(id);
 
+    // Delete customer and return the deleted record
     const [deletedCustomer] = await db
       .delete(customers)
       .where(eq(customers.id, id))
@@ -106,9 +147,14 @@ export class CustomerService {
     return deletedCustomer;
   }
 
+  /**
+   * Get all customers ordered by creation date (newest first)
+   * @returns Array of all customers
+   */
   async getAllCustomers() {
     return await db.select().from(customers).orderBy(desc(customers.createdAt));
   }
 }
 
+// Export singleton instance for use throughout the application
 export const customerService = new CustomerService();

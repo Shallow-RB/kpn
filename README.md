@@ -29,6 +29,26 @@ bun run dev
 - Frontend: http://localhost:3001
 - Backend: http://localhost:3000
 
+## 🔧 Environment Setup
+
+The application uses environment variables with sensible defaults. No manual setup required for development.
+
+**Note:** When encountering any trouble, create a `.env` file in both repo's and copy their respective `.env.example` values to the file
+
+**Backend (apps/server):**
+
+```env
+DATABASE_URL=postgresql://postgres:password@localhost:5432/kpn
+```
+
+**Frontend (apps/web):**
+
+```env
+NEXT_PUBLIC_SERVER_URL=http://localhost:3000/api
+```
+
+**Note:** These are automatically configured for the Docker setup. For production, create `.env.local` files in each app directory.
+
 ## 🛠️ Tech Stack
 
 **Frontend:** Next.js 15, React 19, TypeScript, Tailwind CSS, Shadcn UI, Tanstack Query

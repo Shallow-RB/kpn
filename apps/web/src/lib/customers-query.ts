@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
-// Single Customer type (frontend + backend contract)
 export interface Customer {
   id: string;
   firstName: string;
