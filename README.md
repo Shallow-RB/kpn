@@ -8,11 +8,13 @@ A full-stack customer management application built with Next.js, Drizzle ORM, Po
 ### Prerequisites
 
 - Node.js 18+ or Bun 1.0+
-- Docker and Docker Compose
+- Docker / Docker Desktop and Docker Compose
 
 ### Setup (5 minutes)
 
 ```bash
+# ALL 'bun' COMMANDS ARE INTERCHANGEABLE WITH NPM/NODE
+
 # 1. Install dependencies
 bun i
 
