@@ -68,9 +68,12 @@ NEXT_PUBLIC_SERVER_URL=http://localhost:3000/api
 
 ## 🛠️ Tech Stack
 
-**Frontend:** Next.js 15, React 19, TypeScript, Tailwind CSS, Shadcn UI, Tanstack Query
-**Backend:** Next.js API Routes, Drizzle ORM, PostgreSQL, Zod validation
+**Frontend:** Next.js 15, React 19, TypeScript, Tailwind CSS, Shadcn UI, Tanstack Query, Zod validation
+
+**Backend:** Next.js API Routes, Drizzle ORM, PostgreSQL
+
 **Testing:** Playwright E2E tests
+
 **Dev Tools:** Turbo monorepo, Bun package manager
 
 ## 📋 Available Commands
@@ -115,7 +118,6 @@ cd apps/web && bun run test:e2e  # Run E2E tests
 
 - Full CRUD operations for customers
 - Real-time search and filtering
-- Responsive design (Mobile: 320px+, Tablet: 768px+, Desktop: 1024px+)
 - Form validation with React Hook Form
 - Type-safe API integration
 
