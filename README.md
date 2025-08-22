@@ -1,4 +1,5 @@
 # KPN Customer Management System
+# Focus on Assignment 2
 
 A full-stack customer management application built with Next.js, Drizzle ORM, PostgreSQL, and Tanstack Query.
 
