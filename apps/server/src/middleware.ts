@@ -1,22 +1,37 @@
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export function middleware() {
-	const res = NextResponse.next();
+export function middleware(request: NextRequest) {
+  // Handle CORS for API routes
+  if (request.nextUrl.pathname.startsWith("/api")) {
+    const response = NextResponse.next();
 
-	res.headers.append("Access-Control-Allow-Credentials", "true");
-	res.headers.append(
-		"Access-Control-Allow-Origin",
-		process.env.CORS_ORIGIN || "",
-	);
-	res.headers.append("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-	res.headers.append(
-		"Access-Control-Allow-Headers",
-		"Content-Type, Authorization",
-	);
+    // Allow requests from the frontend
+    response.headers.set(
+      "Access-Control-Allow-Origin",
+      "http://localhost:3001"
+    );
+    response.headers.set(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS"
+    );
+    response.headers.set(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization"
+    );
+    response.headers.set("Access-Control-Allow-Credentials", "true");
 
-	return res;
+    // Handle preflight requests
+    if (request.method === "OPTIONS") {
+      return new NextResponse(null, { status: 200, headers: response.headers });
+    }
+
+    return response;
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-	matcher: "/:path*",
+  matcher: "/api/:path*",
 };
