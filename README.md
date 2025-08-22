@@ -14,15 +14,29 @@ A full-stack customer management application built with Next.js, Drizzle ORM, Po
 
 ```bash
 # 1. Install dependencies
-bun install
+bun i
+
 
 # 2. Start database and setup
+cd apps/server
+
+cp .env.example .env   # create your env file from the example
+
 bun run db:start
 bun run db:push
 bun run db:seed
 
+# 2. Start frontend
+cd ..
+cd web
+
+cp .env.example .env   # create your env file from the example
+
 # 3. Start both apps
-bun run dev
+# in root folder
+bun dev
+
+
 ```
 
 **Access:**
